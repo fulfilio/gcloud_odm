@@ -33,10 +33,7 @@ class Connection(object):
                 self.discover_credentials()
             except DefaultCredentialsError:
                 pass
-        try:
-            self.get_client()
-        except DefaultCredentialsError:
-            pass
+        self.refresh_datastore_client(silent=True)
 
     @property
     def project(self):
@@ -45,10 +42,7 @@ class Connection(object):
     @project.setter
     def project(self, value):
         self._project = value
-        try:
-            self.refresh_datastore_client()
-        except DefaultCredentialsError:
-            pass
+        self.refresh_datastore_client(silent=True)
 
     @property
     def namespace(self):
@@ -57,10 +51,7 @@ class Connection(object):
     @namespace.setter
     def namespace(self, value):
         self._namespace = value
-        try:
-            self.refresh_datastore_client()
-        except DefaultCredentialsError:
-            pass
+        self.refresh_datastore_client(silent=True)
 
     def get_client(self, buffer_seconds=60):
         client_expiry = self.client and self.client._credentials.expiry
@@ -74,15 +65,19 @@ class Connection(object):
             self.refresh_datastore_client()
         return self.client
 
-    def refresh_datastore_client(self):
+    def refresh_datastore_client(self, silent=False):
         """
         Return an authenticated instance of google datastore
         """
-        self.client = datastore.Client(
-            credentials=self.credentials,
-            project=self.project,
-            namespace=self.namespace
-        )
+        try:
+            self.client = datastore.Client(
+                credentials=self.credentials,
+                project=self.project,
+                namespace=self.namespace
+            )
+        except DefaultCredentialsError:
+            if not silent:
+                raise
 
     def connect_with_account_info(self, info=None):
         key = 'GOOGLE_APPLICATION_CREDENTIALS_INFO'
