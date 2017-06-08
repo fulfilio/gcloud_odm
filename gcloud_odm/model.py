@@ -22,6 +22,10 @@ class Model(BaseModel):
     created_at = DateTimeType(default=datetime.utcnow)
     updated_at = DateTimeType()
 
+    def __repr__(self):
+        repr = super(Model, self).__repr__()
+        return "%s (%s)" % (repr, self.id)
+
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return NotImplemented

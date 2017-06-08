@@ -2,7 +2,7 @@
 
 __author__ = """Fulfil.io Inc."""
 __email__ = 'support@fulfil.io'
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
 
 from .datastore_client import client, connection, Connection
