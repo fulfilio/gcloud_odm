@@ -21,7 +21,7 @@ test_requirements = [
 
 setup(
     name='gcloud_odm',
-    version='0.0.3',
+    version='0.0.4',
     description="Google cloud datastore based ODM",
     long_description=readme + '\n\n' + history,
     author="Fulfil.io Inc.",
