@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import json
+import datetime
 
 from schematics.types import \
     StringType as BaseStringType, \
@@ -57,8 +58,18 @@ class DateTimeType(BaseDateTimeType):
 
 class DateType(BaseDateType):
 
+    def to_native(self, value, *args, **kwargs):
+        if isinstance(value, datetime.datetime):
+            value = value.date()
+        return super(DateType, self).to_native(value, *args, **kwargs)
+
     def to_primitive(self, value, *args, **kwargs):
-        return value
+        res = super(DateType, self).to_primitive(value, *args, **kwargs)
+        # XXX: GCP Datastore only support DateTime, add minimum time
+        if isinstance(value, datetime.date):
+            return datetime.datetime.combine(
+                value, datetime.datetime.min.time())
+        return res
 
 
 class Many2OneType(BaseType):
